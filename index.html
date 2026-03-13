@@ -120,25 +120,28 @@
     </aside>
 
     <!-- CENTER: PROTOCOL TIMELINE -->
-    <main class="flex-1 glass-card p-8 flex flex-col overflow-hidden">
-        <div class="flex justify-between items-end mb-8">
-            <div>
-                <h2 class="text-xs font-bold text-blue-500 uppercase tracking-[0.3em] mb-1">Live Protocol</h2>
-                <h3 class="text-3xl font-bold tracking-tight">Mission Control</h3>
-            </div>
-            <div class="text-right">
-                <p id="current-date" class="font-bold text-lg text-white">Monday, March 11</p>
-                <p class="text-[10px] text-gray-500 uppercase tracking-widest">Discipline Operating System</p>
-            </div>
+   <main class="flex-1 glass-card p-8 flex flex-col overflow-hidden">
+
+        <div id="dashboard-view">
+    <!-- timeline existing -->
         </div>
 
-        <div class="flex-1 overflow-y-auto custom-scroll timeline-container">
-            <div class="timeline-line"></div>
-            <div id="protocol-list" class="space-y-4 pr-4">
-                <!-- Timeline injected here -->
-            </div>
-        </div>
-    </main>
+        <div id="content-view" class="hidden">
+            <h2 class="text-2xl font-bold mb-4">Content Strategy</h2>
+    <p class="text-gray-400 text-sm">Track your shorts production and ideas.</p>
+</div>
+
+<div id="fitness-view" class="hidden">
+    <h2 class="text-2xl font-bold mb-4">Biometric Tracking</h2>
+    <p class="text-gray-400 text-sm">Monitor workouts, running and skipping.</p>
+</div>
+
+<div id="ideas-view" class="hidden">
+    <h2 class="text-2xl font-bold mb-4">Idea Bank</h2>
+    <p class="text-gray-400 text-sm">Store viral content ideas.</p>
+</div>
+
+</main>
 
     <!-- RIGHT COLUMN -->
     <div class="w-80 flex flex-col gap-6 h-full overflow-y-auto custom-scroll pr-1">
