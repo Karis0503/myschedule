@@ -1,309 +1,375 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SYSTEM OS | Mission Control</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #0b0c10;
-            --card: rgba(20, 22, 26, 0.7);
-            --accent: #3b82f6;
-            --accent-glow: rgba(59, 130, 246, 0.3);
-            --success: #10b981;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SYSTEM OS</title>
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg);
-            color: #f1f5f9;
-            height: 100vh;
-            overflow: hidden;
-        }
+<script src="https://cdn.tailwindcss.com"></script>
 
-        .glass-card {
-            background: var(--card);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 24px;
-        }
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-        /* Timeline Styling */
-        .timeline-container { position: relative; padding-left: 40px; }
-        .timeline-line {
-            position: absolute;
-            left: 20px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, var(--accent), #a855f7, transparent);
-            opacity: 0.2;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-        .task-card {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
+<style>
 
-        .task-dot {
-            position: absolute;
-            left: -29px;
-            top: 22px;
-            width: 12px;
-            height: 12px;
-            background: #1e293b;
-            border: 2px solid var(--accent);
-            border-radius: 50%;
-            z-index: 10;
-            transition: all 0.3s ease;
-        }
+body{
+font-family:'Plus Jakarta Sans',sans-serif;
+background:#0b0c10;
+color:white;
+}
 
-        /* Interaction States */
-        .task-card.completed {
-            opacity: 0.5;
-            transform: scale(0.98);
-            border-color: var(--success);
-        }
+.glass-card{
+background:rgba(20,22,26,0.7);
+backdrop-filter:blur(16px);
+border:1px solid rgba(255,255,255,0.05);
+border-radius:24px;
+}
 
-        .task-card.completed .task-dot {
-            background: var(--success);
-            border-color: var(--success);
-            box-shadow: 0 0 12px var(--success);
-        }
+.timeline-container{position:relative;padding-left:40px}
+.timeline-line{
+position:absolute;
+left:20px;
+top:0;
+bottom:0;
+width:2px;
+background:linear-gradient(to bottom,#3b82f6,#a855f7,transparent);
+opacity:.2
+}
 
-        .task-card.completed .check-icon {
-            color: var(--success);
-            display: block !important;
-        }
+.task-card{transition:.3s}
 
-        .glow-active {
-            box-shadow: 0 0 20px var(--accent-glow);
-        }
+.task-dot{
+position:absolute;
+left:-29px;
+top:22px;
+width:12px;
+height:12px;
+background:#1e293b;
+border:2px solid #3b82f6;
+border-radius:50%
+}
 
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+.task-card.completed{
+opacity:.5;
+border-color:#10b981
+}
 
-        .progress-bar { transition: width 1s cubic-bezier(0.65, 0, 0.35, 1); }
-    </style>
+.task-card.completed .task-dot{
+background:#10b981;
+border-color:#10b981
+}
+
+.progress-bar{
+transition:width .6s
+}
+
+@media(max-width:900px){
+
+body{
+flex-direction:column;
+padding:16px;
+}
+
+aside{
+width:100%;
+flex-direction:row;
+overflow:auto;
+}
+
+}
+
+</style>
 </head>
-<body class="flex p-6 gap-6">
 
-    <!-- SIDEBAR -->
-    <aside class="w-64 flex flex-col gap-8">
-        <div class="px-4 py-2">
-            <h1 class="text-xl font-black tracking-tighter flex items-center gap-2">
-                <span class="bg-blue-600 p-1.5 rounded-lg text-white"><i class="fas fa-microchip"></i></span>
-                SYSTEM<span class="text-blue-500">OS</span>
-            </h1>
-        </div>
+<body class="flex gap-6 p-6 h-screen">
 
-        <nav class="flex flex-col gap-1">
-            <button onclick="switchView('dashboard')" class="flex items-center gap-4 px-6 py-4 rounded-xl"><i class="fas fa-layer-group"></i> Dashboard</button>
-            <button onclick="switchView('content')" class="flex items-center gap-4 px-6 py-4 rounded-xl"><i class="fas fa-video"></i> Content</button>
-            <button onclick="switchView('fitness')" class="flex items-center gap-4 px-6 py-4 rounded-xl"><i class="fas fa-dumbbell"></i> Fitness</button>
-            <button onclick="switchView('ideas')" class="flex items-center gap-4 px-6 py-4 rounded-xl"><i class="fas fa-lightbulb"></i> Idea Bank</button>
-        </nav>
+<!-- SIDEBAR -->
 
-        <div class="mt-auto glass-card p-5">
-            <div class="flex justify-between text-[10px] font-bold text-gray-500 uppercase mb-2 tracking-widest">
-                <span>System Integrity</span>
-                <span id="integrity-percent" class="text-blue-400">0%</span>
-            </div>
-            <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                <div id="integrity-bar" class="progress-bar h-full bg-blue-500" style="width: 0%"></div>
-            </div>
-            <button onclick="resetSystem()" class="w-full mt-4 py-2 text-[10px] uppercase text-red-400/50 hover:text-red-400 transition-colors">Reset Protocol</button>
-        </div>
-    </aside>
+<aside class="w-64 flex flex-col gap-8">
 
-    <!-- CENTER: PROTOCOL TIMELINE -->
-   <main class="flex-1 glass-card p-8 flex flex-col overflow-hidden">
+<h1 class="font-black text-xl flex items-center gap-2 px-4">
+<i class="fas fa-microchip text-blue-500"></i>
+SYSTEM<span class="text-blue-500">OS</span>
+</h1>
 
-        <div id="dashboard-view">
-    <!-- timeline existing -->
-        </div>
+<nav class="flex flex-col gap-2">
 
-        <div id="content-view" class="hidden">
-            <h2 class="text-2xl font-bold mb-4">Content Strategy</h2>
-    <p class="text-gray-400 text-sm">Track your shorts production and ideas.</p>
+<button onclick="switchView('dashboard')" class="nav-btn px-5 py-3 text-left">Dashboard</button>
+
+<button onclick="switchView('content')" class="nav-btn px-5 py-3 text-left">Content</button>
+
+<button onclick="switchView('fitness')" class="nav-btn px-5 py-3 text-left">Fitness</button>
+
+<button onclick="switchView('ideas')" class="nav-btn px-5 py-3 text-left">Idea Bank</button>
+
+</nav>
+
+<div class="mt-auto glass-card p-4">
+
+<p class="text-xs text-gray-400 mb-2">System Integrity</p>
+
+<div class="w-full bg-gray-800 h-2 rounded">
+<div id="integrity-bar" class="progress-bar bg-blue-500 h-2 rounded" style="width:0%"></div>
 </div>
 
-<div id="fitness-view" class="hidden">
-    <h2 class="text-2xl font-bold mb-4">Biometric Tracking</h2>
-    <p class="text-gray-400 text-sm">Monitor workouts, running and skipping.</p>
+<p id="integrity-percent" class="text-xs mt-2">0%</p>
+
+<button onclick="resetSystem()" class="text-red-400 text-xs mt-3">Reset Day</button>
+
 </div>
 
-<div id="ideas-view" class="hidden">
-    <h2 class="text-2xl font-bold mb-4">Idea Bank</h2>
-    <p class="text-gray-400 text-sm">Store viral content ideas.</p>
+</aside>
+
+<!-- MAIN AREA -->
+
+<main class="flex-1 flex flex-col gap-6 overflow-hidden">
+
+<!-- DASHBOARD VIEW -->
+
+<div id="dashboard-view" class="view flex flex-col h-full">
+
+<h2 class="text-2xl font-bold mb-4">Daily Protocol</h2>
+
+<div class="flex-1 overflow-y-auto timeline-container">
+
+<div class="timeline-line"></div>
+
+<div id="protocol-list" class="space-y-4"></div>
+
+</div>
+
+</div>
+
+<!-- CONTENT VIEW -->
+
+<div id="content-view" class="view hidden">
+
+<h2 class="text-2xl font-bold mb-6">Content Strategy</h2>
+
+<div id="content-trackers" class="space-y-6"></div>
+
+</div>
+
+<!-- FITNESS VIEW -->
+
+<div id="fitness-view" class="view hidden">
+
+<h2 class="text-2xl font-bold mb-6">Fitness Tracker</h2>
+
+<div id="fitness-grid" class="grid grid-cols-2 gap-4"></div>
+
+</div>
+
+<!-- IDEA VIEW -->
+
+<div id="ideas-view" class="view hidden">
+
+<h2 class="text-2xl font-bold mb-4">Idea Bank</h2>
+
+<input id="idea-input" placeholder="New idea..." class="p-2 rounded bg-black border border-gray-700">
+
+<button onclick="addIdea()" class="ml-2 bg-blue-600 px-4 py-2 rounded">Add</button>
+
+<div id="idea-list" class="mt-4 space-y-2"></div>
+
 </div>
 
 </main>
 
-    <!-- RIGHT COLUMN -->
-    <div class="w-80 flex flex-col gap-6 h-full overflow-y-auto custom-scroll pr-1">
-        <!-- Content Tracker -->
-        <div class="glass-card p-6">
-            <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-6">Content Engine</h4>
-            <div id="content-trackers" class="space-y-6">
-                <!-- Content bars -->
-            </div>
-        </div>
+<script>
 
-        <!-- Fitness Tracker -->
-        <div class="glass-card p-6">
-            <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Body System</h4>
-            <div id="fitness-grid" class="grid grid-cols-2 gap-3">
-                <!-- Fitness toggles -->
-            </div>
-        </div>
+let state=JSON.parse(localStorage.getItem("creator_os_v4"))||{
 
-        <!-- Idle Priority -->
-        <div class="glass-card p-6 border-blue-500/20 bg-blue-500/5">
-            <h4 class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-4">Idle Priority</h4>
-            <ul class="text-[11px] space-y-3 font-medium text-gray-400">
-                <li class="flex items-center gap-2"><i class="fas fa-chevron-right text-[8px] text-blue-500"></i> Generate 10 video ideas</li>
-                <li class="flex items-center gap-2"><i class="fas fa-chevron-right text-[8px] text-blue-500"></i> Research viral shorts</li>
-                <li class="flex items-center gap-2"><i class="fas fa-chevron-right text-[8px] text-blue-500"></i> Improve Money Protocol</li>
-            </ul>
-        </div>
-    </div>
+protocol:[
+{ id:0,time:'04:00',task:'Wake + Prayer',desc:'Fajr',done:false },
+{ id:1,time:'04:20',task:'Skipping',desc:'Jump rope',done:false,fitnessSync:'skipping'},
+{ id:2,time:'04:40',task:'Running',desc:'Jog',done:false,fitnessSync:'running'},
+{ id:3,time:'05:10',task:'Workout',desc:'Pushups Squats',done:false,fitnessSync:'workout'},
+{ id:4,time:'06:00',task:'Deep Work',desc:'Tech Short',done:false,contentSync:'tech'},
+{ id:5,time:'09:00',task:'Internship',desc:'Upload Brainrot',done:false,contentSync:'brainrot'},
+{ id:6,time:'19:00',task:'Growth Session',desc:'Ideas Research',done:false}
+],
 
-    <script>
-        // SYSTEM DATA STATE
-        let state = JSON.parse(localStorage.getItem('creator_os_v3')) || {
-            protocol: [
-                { id: 0, time: '04:00 - 04:20', task: 'Spiritual Start', desc: 'Wake up, Wudhu, Fajr prayer, Hydrate', done: false },
-                { id: 1, time: '04:20 - 04:40', task: 'Skipping', desc: '10–15 minute jump rope session', done: false, fitnessSync: 'skipping' },
-                { id: 2, time: '04:40 - 05:10', task: 'Running (M/W/S)', desc: '15–20 minute jog (or Strength)', done: false, fitnessSync: 'running' },
-                { id: 3, time: '05:10 - 05:40', task: 'Strength Workout', desc: 'Pushups, Squats, Lunges, Plank', done: false, fitnessSync: 'workout' },
-                { id: 4, time: '05:40 - 06:00', task: 'Shower + Breakfast', desc: 'Prepare for deep work session', done: false },
-                { id: 5, time: '06:00 - 07:30', task: 'Deep Work: Content', desc: 'Create 1 Tech Short / Brainstorm', done: false, contentSync: 'tech' },
-                { id: 6, time: '08:00 - 09:00', task: 'Commute / Brainstorm', desc: 'Idea generation on the move', done: false },
-                { id: 7, time: '09:00 - 16:00', task: 'Internship Work', desc: 'Downtime: Upload 2x Brainrot + Money Post', done: false, contentSync: ['brainrot', 'money'] },
-                { id: 8, time: '17:30 - 19:00', task: 'Creative Session', desc: 'Brainrot video / AI Tool Research', done: false },
-                { id: 9, time: '19:00 - 21:00', task: 'Growth Session', desc: 'Viral research / Money Protocol improvements', done: false },
-                { id: 10, time: '22:30 - 23:00', task: 'Sleep', desc: 'System shutdown for recovery', done: false }
-            ],
-            content: {
-                brainrot: { count: 0, target: 2, label: 'Brainrot Shorts' },
-                tech: { count: 0, target: 1, label: 'Tech Shorts' },
-                money: { count: 0, target: 1, label: 'Money Protocol' }
-            },
-            fitness: {
-                skipping: false,
-                running: false,
-                workout: false,
-                hydration: true
-            }
-        };
+content:{
+brainrot:{count:0,target:2,label:'Brainrot Shorts'},
+tech:{count:0,target:1,label:'Tech Shorts'},
+money:{count:0,target:1,label:'Money Protocol'}
+},
 
-        // RENDER FUNCTIONS
-        function renderAll() {
-            renderTimeline();
-            renderContent();
-            renderFitness();
-            updateIntegrity();
-            localStorage.setItem('creator_os_v3', JSON.stringify(state));
-        }
+fitness:{
+skipping:false,
+running:false,
+workout:false
+},
 
-        function renderTimeline() {
-            const list = document.getElementById('protocol-list');
-            list.innerHTML = state.protocol.map(item => `
-                <div onclick="toggleTask(${item.id})" class="task-card glass-card p-5 flex items-center justify-between cursor-pointer group ${item.done ? 'completed' : 'hover:bg-white/5'}">
-                    <div class="task-dot"></div>
-                    <div class="flex-1">
-                        <div class="flex items-center gap-3 mb-1">
-                            <span class="text-[10px] font-mono font-bold text-blue-500 uppercase tracking-tighter">${item.time}</span>
-                            <i class="check-icon fas fa-check-circle text-xs hidden"></i>
-                        </div>
-                        <h4 class="font-bold text-sm group-hover:text-blue-400 transition-colors">${item.task}</h4>
-                        <p class="text-[10px] text-gray-500 font-medium">${item.desc}</p>
-                    </div>
-                </div>
-            `).join('');
-        }
+ideas:["AI tools that make money"]
 
-        function renderContent() {
-            const container = document.getElementById('content-trackers');
-            container.innerHTML = Object.entries(state.content).map(([key, data]) => {
-                const perc = (data.count / data.target) * 100;
-                return `
-                    <div class="group">
-                        <div class="flex justify-between text-[10px] font-bold mb-2">
-                            <span class="text-gray-500 uppercase tracking-widest">${data.label}</span>
-                            <span class="text-blue-400">${data.count}/${data.target}</span>
-                        </div>
-                        <div class="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                            <div class="progress-bar h-full bg-blue-500" style="width: ${perc}%"></div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
+}
 
-        function renderFitness() {
-            const grid = document.getElementById('fitness-grid');
-            grid.innerHTML = Object.entries(state.fitness).map(([key, done]) => `
-                <div class="p-3 rounded-xl border text-center transition-all ${done ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-white/5 border-white/5 text-gray-500'}">
-                    <p class="text-[9px] font-bold uppercase mb-1">${key}</p>
-                    <i class="fas ${done ? 'fa-check-circle' : 'fa-circle-notch'} text-xs"></i>
-                </div>
-            `).join('');
-        }
+function renderAll(){
+renderTimeline()
+renderContent()
+renderFitness()
+renderIdeas()
+updateIntegrity()
+localStorage.setItem("creator_os_v4",JSON.stringify(state))
+}
 
-        // INTERACTION LOGIC
-        function toggleTask(id) {
-            const task = state.protocol.find(p => p.id === id);
-            task.done = !task.done;
+function renderTimeline(){
 
-            // Sync Fitness
-            if (task.fitnessSync) {
-                state.fitness[task.fitnessSync] = task.done;
-            }
+const list=document.getElementById("protocol-list")
 
-            // Sync Content
-            if (task.contentSync) {
-                if (Array.isArray(task.contentSync)) {
-                    task.contentSync.forEach(key => {
-                        state.content[key].count = task.done ? state.content[key].target : 0;
-                    });
-                } else {
-                    state.content[task.contentSync].count = task.done ? state.content[task.contentSync].target : 0;
-                }
-            }
+list.innerHTML=state.protocol.map(item=>`
 
-            renderAll();
-        }
+<div onclick="toggleTask(${item.id})"
+class="task-card glass-card p-4 cursor-pointer relative ${item.done?'completed':''}">
 
-        function updateIntegrity() {
-            const total = state.protocol.length;
-            const completed = state.protocol.filter(p => p.done).length;
-            const perc = Math.round((completed / total) * 100);
-            
-            document.getElementById('integrity-bar').style.width = perc + '%';
-            document.getElementById('integrity-percent').innerText = perc + '%';
-            
-            const options = { weekday: 'long', month: 'long', day: 'numeric' };
-            document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', options);
-        }
+<div class="task-dot"></div>
 
-        function resetSystem() {
-            if(confirm("Confirm Protocol Reset? Daily progress will be cleared.")) {
-                state.protocol.forEach(p => p.done = false);
-                state.fitness = { skipping: false, running: false, workout: false, hydration: false };
-                state.content.brainrot.count = 0;
-                state.content.tech.count = 0;
-                state.content.money.count = 0;
-                renderAll();
-            }
-        }
+<p class="text-xs text-blue-400">${item.time}</p>
 
-        // INIT
-        renderAll();
-    </script>
+<h4 class="font-bold">${item.task}</h4>
+
+<p class="text-xs text-gray-400">${item.desc}</p>
+
+</div>
+
+`).join("")
+
+}
+
+function renderContent(){
+
+const c=document.getElementById("content-trackers")
+
+c.innerHTML=Object.entries(state.content).map(([k,v])=>{
+
+const perc=(v.count/v.target)*100
+
+return`
+
+<div>
+
+<div class="flex justify-between text-xs mb-2">
+
+<span>${v.label}</span>
+
+<span>${v.count}/${v.target}</span>
+
+</div>
+
+<div class="w-full h-2 bg-gray-800 rounded">
+
+<div class="progress-bar bg-blue-500 h-2 rounded" style="width:${perc}%"></div>
+
+</div>
+
+</div>
+
+`
+
+}).join("")
+
+}
+
+function renderFitness(){
+
+const grid=document.getElementById("fitness-grid")
+
+grid.innerHTML=Object.entries(state.fitness).map(([k,v])=>`
+
+<div class="glass-card p-4 text-center ${v?'text-green-400':''}">
+
+${k}
+
+</div>
+
+`).join("")
+
+}
+
+function renderIdeas(){
+
+const list=document.getElementById("idea-list")
+
+list.innerHTML=state.ideas.map(i=>`<div class="glass-card p-2">${i}</div>`).join("")
+
+}
+
+function toggleTask(id){
+
+const t=state.protocol.find(x=>x.id===id)
+
+t.done=!t.done
+
+if(t.fitnessSync) state.fitness[t.fitnessSync]=t.done
+
+if(t.contentSync){
+
+state.content[t.contentSync].count=t.done?state.content[t.contentSync].target:0
+
+}
+
+renderAll()
+
+}
+
+function updateIntegrity(){
+
+const total=state.protocol.length
+
+const done=state.protocol.filter(p=>p.done).length
+
+const perc=Math.round(done/total*100)
+
+document.getElementById("integrity-bar").style.width=perc+"%"
+
+document.getElementById("integrity-percent").innerText=perc+"%"
+
+}
+
+function switchView(view){
+
+document.querySelectorAll(".view").forEach(v=>v.classList.add("hidden"))
+
+document.getElementById(view+"-view").classList.remove("hidden")
+
+}
+
+function addIdea(){
+
+const input=document.getElementById("idea-input")
+
+if(!input.value)return
+
+state.ideas.push(input.value)
+
+input.value=""
+
+renderAll()
+
+}
+
+function resetSystem(){
+
+state.protocol.forEach(p=>p.done=false)
+
+state.content.brainrot.count=0
+
+state.content.tech.count=0
+
+state.content.money.count=0
+
+state.fitness={skipping:false,running:false,workout:false}
+
+renderAll()
+
+}
+
+renderAll()
+
+</script>
+
 </body>
 </html>
