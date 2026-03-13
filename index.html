@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYSTEM OS | Mission Control</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b0c10;
+            --card: rgba(20, 22, 26, 0.7);
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.3);
+            --success: #10b981;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: #f1f5f9;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .glass-card {
+            background: var(--card);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+        }
+
+        /* Timeline Styling */
+        .timeline-container { position: relative; padding-left: 40px; }
+        .timeline-line {
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent), #a855f7, transparent);
+            opacity: 0.2;
+        }
+
+        .task-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .task-dot {
+            position: absolute;
+            left: -29px;
+            top: 22px;
+            width: 12px;
+            height: 12px;
+            background: #1e293b;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        /* Interaction States */
+        .task-card.completed {
+            opacity: 0.5;
+            transform: scale(0.98);
+            border-color: var(--success);
+        }
+
+        .task-card.completed .task-dot {
+            background: var(--success);
+            border-color: var(--success);
+            box-shadow: 0 0 12px var(--success);
+        }
+
+        .task-card.completed .check-icon {
+            color: var(--success);
+            display: block !important;
+        }
+
+        .glow-active {
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+
+        .progress-bar { transition: width 1s cubic-bezier(0.65, 0, 0.35, 1); }
+    </style>
+</head>
+<body class="flex p-6 gap-6">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 flex flex-col gap-8">
+        <div class="px-4 py-2">
+            <h1 class="text-xl font-black tracking-tighter flex items-center gap-2">
+                <span class="bg-blue-600 p-1.5 rounded-lg text-white"><i class="fas fa-microchip"></i></span>
+                SYSTEM<span class="text-blue-500">OS</span>
+            </h1>
+        </div>
+
+        <nav class="flex flex-col gap-1">
+            <button class="flex items-center gap-4 px-6 py-4 rounded-xl bg-blue-500/10 text-blue-400 border-r-2 border-blue-500"><i class="fas fa-layer-group"></i> Dashboard</button>
+            <button class="flex items-center gap-4 px-6 py-4 rounded-xl opacity-50 hover:opacity-100 transition-all"><i class="fas fa-video"></i> Content</button>
+            <button class="flex items-center gap-4 px-6 py-4 rounded-xl opacity-50 hover:opacity-100 transition-all"><i class="fas fa-dumbbell"></i> Fitness</button>
+            <button class="flex items-center gap-4 px-6 py-4 rounded-xl opacity-50 hover:opacity-100 transition-all"><i class="fas fa-lightbulb"></i> Idea Bank</button>
+        </nav>
+
+        <div class="mt-auto glass-card p-5">
+            <div class="flex justify-between text-[10px] font-bold text-gray-500 uppercase mb-2 tracking-widest">
+                <span>System Integrity</span>
+                <span id="integrity-percent" class="text-blue-400">0%</span>
+            </div>
+            <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                <div id="integrity-bar" class="progress-bar h-full bg-blue-500" style="width: 0%"></div>
+            </div>
+            <button onclick="resetSystem()" class="w-full mt-4 py-2 text-[10px] uppercase text-red-400/50 hover:text-red-400 transition-colors">Reset Protocol</button>
+        </div>
+    </aside>
+
+    <!-- CENTER: PROTOCOL TIMELINE -->
+    <main class="flex-1 glass-card p-8 flex flex-col overflow-hidden">
+        <div class="flex justify-between items-end mb-8">
+            <div>
+                <h2 class="text-xs font-bold text-blue-500 uppercase tracking-[0.3em] mb-1">Live Protocol</h2>
+                <h3 class="text-3xl font-bold tracking-tight">Mission Control</h3>
+            </div>
+            <div class="text-right">
+                <p id="current-date" class="font-bold text-lg text-white">Monday, March 11</p>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest">Discipline Operating System</p>
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto custom-scroll timeline-container">
+            <div class="timeline-line"></div>
+            <div id="protocol-list" class="space-y-4 pr-4">
+                <!-- Timeline injected here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- RIGHT COLUMN -->
+    <div class="w-80 flex flex-col gap-6 h-full overflow-y-auto custom-scroll pr-1">
+        <!-- Content Tracker -->
+        <div class="glass-card p-6">
+            <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-6">Content Engine</h4>
+            <div id="content-trackers" class="space-y-6">
+                <!-- Content bars -->
+            </div>
+        </div>
+
+        <!-- Fitness Tracker -->
+        <div class="glass-card p-6">
+            <h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Body System</h4>
+            <div id="fitness-grid" class="grid grid-cols-2 gap-3">
+                <!-- Fitness toggles -->
+            </div>
+        </div>
+
+        <!-- Idle Priority -->
+        <div class="glass-card p-6 border-blue-500/20 bg-blue-500/5">
+            <h4 class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-4">Idle Priority</h4>
+            <ul class="text-[11px] space-y-3 font-medium text-gray-400">
+                <li class="flex items-center gap-2"><i class="fas fa-chevron-right text-[8px] text-blue-500"></i> Generate 10 video ideas</li>
+                <li class="flex items-center gap-2"><i class="fas fa-chevron-right text-[8px] text-blue-500"></i> Research viral shorts</li>
+                <li class="flex items-center gap-2"><i class="fas fa-chevron-right text-[8px] text-blue-500"></i> Improve Money Protocol</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // SYSTEM DATA STATE
+        let state = JSON.parse(localStorage.getItem('creator_os_v3')) || {
+            protocol: [
+                { id: 0, time: '04:00 - 04:20', task: 'Spiritual Start', desc: 'Wake up, Wudhu, Fajr prayer, Hydrate', done: false },
+                { id: 1, time: '04:20 - 04:40', task: 'Skipping', desc: '10–15 minute jump rope session', done: false, fitnessSync: 'skipping' },
+                { id: 2, time: '04:40 - 05:10', task: 'Running (M/W/S)', desc: '15–20 minute jog (or Strength)', done: false, fitnessSync: 'running' },
+                { id: 3, time: '05:10 - 05:40', task: 'Strength Workout', desc: 'Pushups, Squats, Lunges, Plank', done: false, fitnessSync: 'workout' },
+                { id: 4, time: '05:40 - 06:00', task: 'Shower + Breakfast', desc: 'Prepare for deep work session', done: false },
+                { id: 5, time: '06:00 - 07:30', task: 'Deep Work: Content', desc: 'Create 1 Tech Short / Brainstorm', done: false, contentSync: 'tech' },
+                { id: 6, time: '08:00 - 09:00', task: 'Commute / Brainstorm', desc: 'Idea generation on the move', done: false },
+                { id: 7, time: '09:00 - 16:00', task: 'Internship Work', desc: 'Downtime: Upload 2x Brainrot + Money Post', done: false, contentSync: ['brainrot', 'money'] },
+                { id: 8, time: '17:30 - 19:00', task: 'Creative Session', desc: 'Brainrot video / AI Tool Research', done: false },
+                { id: 9, time: '19:00 - 21:00', task: 'Growth Session', desc: 'Viral research / Money Protocol improvements', done: false },
+                { id: 10, time: '22:30 - 23:00', task: 'Sleep', desc: 'System shutdown for recovery', done: false }
+            ],
+            content: {
+                brainrot: { count: 0, target: 2, label: 'Brainrot Shorts' },
+                tech: { count: 0, target: 1, label: 'Tech Shorts' },
+                money: { count: 0, target: 1, label: 'Money Protocol' }
+            },
+            fitness: {
+                skipping: false,
+                running: false,
+                workout: false,
+                hydration: true
+            }
+        };
+
+        // RENDER FUNCTIONS
+        function renderAll() {
+            renderTimeline();
+            renderContent();
+            renderFitness();
+            updateIntegrity();
+            localStorage.setItem('creator_os_v3', JSON.stringify(state));
+        }
+
+        function renderTimeline() {
+            const list = document.getElementById('protocol-list');
+            list.innerHTML = state.protocol.map(item => `
+                <div onclick="toggleTask(${item.id})" class="task-card glass-card p-5 flex items-center justify-between cursor-pointer group ${item.done ? 'completed' : 'hover:bg-white/5'}">
+                    <div class="task-dot"></div>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-1">
+                            <span class="text-[10px] font-mono font-bold text-blue-500 uppercase tracking-tighter">${item.time}</span>
+                            <i class="check-icon fas fa-check-circle text-xs hidden"></i>
+                        </div>
+                        <h4 class="font-bold text-sm group-hover:text-blue-400 transition-colors">${item.task}</h4>
+                        <p class="text-[10px] text-gray-500 font-medium">${item.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderContent() {
+            const container = document.getElementById('content-trackers');
+            container.innerHTML = Object.entries(state.content).map(([key, data]) => {
+                const perc = (data.count / data.target) * 100;
+                return `
+                    <div class="group">
+                        <div class="flex justify-between text-[10px] font-bold mb-2">
+                            <span class="text-gray-500 uppercase tracking-widest">${data.label}</span>
+                            <span class="text-blue-400">${data.count}/${data.target}</span>
+                        </div>
+                        <div class="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                            <div class="progress-bar h-full bg-blue-500" style="width: ${perc}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderFitness() {
+            const grid = document.getElementById('fitness-grid');
+            grid.innerHTML = Object.entries(state.fitness).map(([key, done]) => `
+                <div class="p-3 rounded-xl border text-center transition-all ${done ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-white/5 border-white/5 text-gray-500'}">
+                    <p class="text-[9px] font-bold uppercase mb-1">${key}</p>
+                    <i class="fas ${done ? 'fa-check-circle' : 'fa-circle-notch'} text-xs"></i>
+                </div>
+            `).join('');
+        }
+
+        // INTERACTION LOGIC
+        function toggleTask(id) {
+            const task = state.protocol.find(p => p.id === id);
+            task.done = !task.done;
+
+            // Sync Fitness
+            if (task.fitnessSync) {
+                state.fitness[task.fitnessSync] = task.done;
+            }
+
+            // Sync Content
+            if (task.contentSync) {
+                if (Array.isArray(task.contentSync)) {
+                    task.contentSync.forEach(key => {
+                        state.content[key].count = task.done ? state.content[key].target : 0;
+                    });
+                } else {
+                    state.content[task.contentSync].count = task.done ? state.content[task.contentSync].target : 0;
+                }
+            }
+
+            renderAll();
+        }
+
+        function updateIntegrity() {
+            const total = state.protocol.length;
+            const completed = state.protocol.filter(p => p.done).length;
+            const perc = Math.round((completed / total) * 100);
+            
+            document.getElementById('integrity-bar').style.width = perc + '%';
+            document.getElementById('integrity-percent').innerText = perc + '%';
+            
+            const options = { weekday: 'long', month: 'long', day: 'numeric' };
+            document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', options);
+        }
+
+        function resetSystem() {
+            if(confirm("Confirm Protocol Reset? Daily progress will be cleared.")) {
+                state.protocol.forEach(p => p.done = false);
+                state.fitness = { skipping: false, running: false, workout: false, hydration: false };
+                state.content.brainrot.count = 0;
+                state.content.tech.count = 0;
+                state.content.money.count = 0;
+                renderAll();
+            }
+        }
+
+        // INIT
+        renderAll();
+    </script>
+</body>
+</html>
